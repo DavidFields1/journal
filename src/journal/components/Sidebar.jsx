@@ -1,3 +1,4 @@
+import { useSelector } from 'react-redux';
 import { TurnedInNot } from '@mui/icons-material';
 import {
 	Box,
@@ -14,6 +15,9 @@ import {
 } from '@mui/material';
 
 export default function Sidebar({ drawerWidth }) {
+	
+	const { displayName = '' } = useSelector(s => s.auth);
+
 	return (
 		<Box
 			component='nav'
@@ -36,14 +40,14 @@ export default function Sidebar({ drawerWidth }) {
 						noWrap
 						component='div'
 					>
-						David Fields
+						{ displayName }
 					</Typography>
 				</Toolbar>
 
 				<Divider />
 
 				<List>
-					{['Profileee', 'Notesss', 'Settings'].map((text) => (
+					{['Profile', 'Notes', 'Settings'].map((text) => (
 						<ListItem
 							key={text}
 							disablePadding
@@ -53,7 +57,7 @@ export default function Sidebar({ drawerWidth }) {
 									<TurnedInNot />
 								</ListItemIcon>
 								<Grid container>
-									<ListItemText primary={text} />
+									<ListItemText primary={text} sx={{ width: '100%'}}/>
 									<ListItemText
 										secondary={'item description'}
 									/>

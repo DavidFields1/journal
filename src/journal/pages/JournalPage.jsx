@@ -7,8 +7,8 @@ import { AddOutlined } from '@mui/icons-material';
 export const JournalPage = () => {
 	return (
 		<JournalLayout>
-			<NothingSelectedView />
-			{/* <NoteView /> */}
+			{/* <NothingSelectedView /> */}
+			<NoteView />
 
 
 			<IconButton

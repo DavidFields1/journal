@@ -22,6 +22,7 @@ export const NoteView = () => {
 
 	return (
 		<Grid
+			className='animate__animated animate__fadeIn animate__faster'
 			container
 			direction='row'
 			justifyContent='space-between'
