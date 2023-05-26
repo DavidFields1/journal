@@ -1,28 +1,28 @@
 import { useSelector } from 'react-redux';
-import { TurnedInNot } from '@mui/icons-material';
 import {
 	Box,
 	Divider,
 	Drawer,
-	Grid,
 	List,
-	ListItem,
-	ListItemButton,
-	ListItemIcon,
-	ListItemText,
 	Toolbar,
 	Typography,
 } from '@mui/material';
+import { FetchingNotes } from '../../ui/components/FetchingNotes';
+import { NoteItem } from './NoteItem';
+import { NoteItemSkeletonList } from './NoteItemSkeletonList';
 
 export default function Sidebar({ drawerWidth }) {
 	
-	const { displayName = '' } = useSelector(s => s.auth);
+	const { displayName = '', status } = useSelector(s => s.auth);
+	const { fetchingNotes } = useSelector(s => s.journal);
+	const { notes } = useSelector(s => s.journal);
 
 	return (
 		<Box
 			component='nav'
 			sx={{ width: { md: drawerWidth }, flexShrink: { md: 0 } }}
 		>
+			<FetchingNotes />
 			<Drawer
 				variant='permanent'
 				open
@@ -47,24 +47,18 @@ export default function Sidebar({ drawerWidth }) {
 				<Divider />
 
 				<List>
-					{['Profile', 'Notes', 'Settings'].map((text) => (
-						<ListItem
-							key={text}
-							disablePadding
-						>
-							<ListItemButton>
-								<ListItemIcon>
-									<TurnedInNot />
-								</ListItemIcon>
-								<Grid container>
-									<ListItemText primary={text} sx={{ width: '100%'}}/>
-									<ListItemText
-										secondary={'item description'}
-									/>
-								</Grid>
-							</ListItemButton>
-						</ListItem>
-					))}
+					{
+						status === 'checking'
+						? (
+							<>
+								<NoteItemSkeletonList />
+							</>
+						) : (
+							notes.map((note) => (
+								<NoteItem note={note} key={note.id} />
+							))
+						)
+					}
 				</List>
 			</Drawer>
 		</Box>

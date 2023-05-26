@@ -1,24 +1,56 @@
-import { SaveOutlined } from '@mui/icons-material';
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Button, Grid, TextField, Typography } from '@mui/material';
-import { useState } from 'react';
-import 'react-quill/dist/quill.snow.css';
+import { SaveOutlined, CloseOutlined } from '@mui/icons-material';
 import { Editor } from '../components/Editor';
+import { startLoadingUserNotes, startSavingNote } from '../../store/journal/thunks';
+import { setActiveNote, setActiveNoteEmpty } from '../../store/journal/journalSlice';
+import 'react-quill/dist/quill.snow.css';
 
 export const NoteView = () => {
-	const [editorState, setEditorState] = useState('');
-	const [title, setTitle] = useState('');
+	const { activeNote, isSaving } = useSelector(s => s.journal);
+	const { title, body, date } = activeNote;
+	
+	const [editorState, setEditorState] = useState(body)
+	const [titleState, setTitleState] = useState(title)
+	const [noteChanged, setNoteChanged] = useState(false)
+
+	const dispatch = useDispatch();
+
+	useEffect(() => {
+		setEditorState(body)
+		setTitleState(title)
+	}, [activeNote])
+
+	useEffect(() => {
+		dispatch(setActiveNote({
+			title: titleState,
+			body: editorState,
+			id: activeNote.id,
+			filesUrls: activeNote.filesUrls,
+			date: activeNote.date
+		}))
+	}, [titleState, editorState])
 
 	const onTitleChange = (event) => {
-		setTitle(event.target.value)
+		setTitleState(event.target.value)
+		setNoteChanged(true);
 	}
 
 	const onEditorStateChange = (newState) => {
 		setEditorState(newState);
+		setNoteChanged(true);
 	};
 	
 	const saveNote = () => {
-		console.log(editorState);
+		dispatch(startSavingNote())
+		dispatch(startLoadingUserNotes());
+		setNoteChanged(false)
 	};
+
+	const closeNote = () => {
+		dispatch(setActiveNoteEmpty())
+	}
 
 	return (
 		<Grid
@@ -31,23 +63,41 @@ export const NoteView = () => {
 		>
 			<Grid item>
 				<Typography
-					fontSize={39}
+					fontSize={18}
 					fontWeight='light'
 				>
-					23 septiembre, 2322
+					<strong>
+					Created at:
+					</strong>
+					{ " " + new Date(date).toLocaleString('en-GB', {
+						hour12: false
+					}) }
 				</Typography>
 			</Grid>
-			<Grid item>
-				<Button
-					sx={{ padding: 2 }}
-					color='primary'
-					onClick={saveNote}
-				>
-					<SaveOutlined sx={{ fontSize: 30, mr: 1 }} />
-					Save
-				</Button>
+			<Grid display={'flex'}>
+				<Grid item>
+					<Button
+							sx={{ padding: 2 }}
+							color={noteChanged ? 'error' : 'primary'}
+							onClick={saveNote}
+							disabled={isSaving}
+						>
+							<SaveOutlined sx={{ fontSize: 30, mr: 1 }} />
+							Save
+					</Button>
+				</Grid>
+				<Grid item>
+					<Button
+							sx={{ padding: 2 }}
+							color={'primary'}
+							onClick={closeNote}
+							disabled={isSaving}
+						>
+							<CloseOutlined sx={{ fontSize: 30, mr: 1 }} />
+							Close 
+					</Button>
+				</Grid>
 			</Grid>
-
 			<Grid
 				container
 				justifyContent='center'
@@ -62,8 +112,10 @@ export const NoteView = () => {
 						fullWidth
 						color='primary'
 						sx={{ mb: 2 }}
-						value={title}
+						value={titleState}
 						onChange={onTitleChange}
+						error={titleState ? false : true}
+						helperText={titleState ? null : 'Title cannot be empty'}
 					/>
 				</Grid>
 				<Grid container>

@@ -6,6 +6,7 @@ import { AuthLayout } from '../layout/AuthLayout';
 import { useForm } from '../../hooks/useForm';
 import { startGoogleSignIn, startSignInWithEmailAndPassword } from '../../store/auth/thunks';
 import { useMemo, useState } from 'react';
+import { CheckingAuth } from '../../ui/components/CheckingAuth';
 
 const initialForm = {
 	email: '',
@@ -44,6 +45,7 @@ export const LoginPage = () => {
 
 	return (
 		<AuthLayout title='Log In'>
+			<CheckingAuth />
 			<form onSubmit={onSubmit} className='animate__animated animate__fadeIn animate__faster'>
 				<Grid container>
 					<Grid

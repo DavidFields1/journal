@@ -5,6 +5,7 @@ import { AuthLayout } from '../layout/AuthLayout';
 import { useForm } from '../../hooks/useForm';
 import { useDispatch, useSelector } from 'react-redux';
 import { startSignUpWithEmailAndPassword } from '../../store/auth/thunks';
+import { CheckingAuth } from '../../ui/components/CheckingAuth';
 
 const initialForm = {
 	username: '',
@@ -44,6 +45,7 @@ export const SignupPage = () => {
 
 	return (
 		<AuthLayout title='Sign Up'>
+			<CheckingAuth />
 			<form onSubmit={onSubmit} className='animate__animated animate__fadeIn animate__faster'>
 				<Grid container> 
 					<Grid
